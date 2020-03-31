@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 
 export interface MentionsProps { }
@@ -18,6 +18,7 @@ const Mentions: React.FC<MentionsProps> = (props) => {
 
     const [mentions, setMentions] = useState<Mention[]>([]);
 
+
     const getMentions = async () => {
         let r = await fetch(`/api/mentions/${id}`);
         let data = await r.json();
@@ -33,7 +34,7 @@ const Mentions: React.FC<MentionsProps> = (props) => {
 
     return (
         <div className="container-fluid">
-            <h1 className="m-3">Mentions</h1>
+            <h1 className="m-3">Mentions </h1>
 
             <div className="list-group">
                 {mentions.map(mention => (
