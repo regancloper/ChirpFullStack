@@ -7,7 +7,7 @@ import './scss/app';
 
 
 
-const App: React.SFC<IAppProps> = props => {
+const App: React.FC<IAppProps> = props => {
 
 
 	return (
