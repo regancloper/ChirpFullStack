@@ -1,12 +1,11 @@
 import { Router } from 'express';
 import chirpsRouter from './chirps';
-import mentionsRouter from './mentions';
+import usersRouter from './users';
 
 const router = Router();
 
 router.use('/chirps', chirpsRouter);
-
-router.use('/mentions', mentionsRouter);
+router.use('/users', usersRouter);
 
 
 

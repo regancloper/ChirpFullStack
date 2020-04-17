@@ -1,28 +1,30 @@
 import * as mysql from 'mysql';
+import config from '../config';
 
-import Chirps from './chirps';
-import Mentions from './mentions';
+const pool = mysql.createPool(config.mysql);
 
-export const Connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'chirprapp',
-    password: 'password1',
-    database: 'chirpr'
-});
+export const Query = <T = any>(query: string, values?: any) => {
 
-export const Query = (query: string, values?: Array<string | number>) => {
-    return new Promise<Array<any>>((resolve, reject) => {
-        Connection.query(query, values, (err, results) => {
-            if (err) reject(err);
-            console.log(results);
-            return resolve(results);
+    const sql = mysql.format(query, values);
+    console.log(sql);
+
+    return new Promise<T>((resolve, reject) => {
+        pool.query(sql, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
         });
     });
 
 };
 
+
+import Chirps from './queries/chirps';
+import Users from './queries/users';
+
 export default {
     Chirps,
-    Mentions
+    Users
 }

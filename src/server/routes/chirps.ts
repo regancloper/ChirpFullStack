@@ -1,66 +1,66 @@
 import * as express from 'express';
-
 import db from '../db';
-import { checkForMentions } from '../utils/checkmentions';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-    try {
-        res.json(await db.Chirps.all());
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
-    }
-});
+router.get('/:id?', async (req, res, next) => {
+    const chirpid = Number(req.params.id);
 
-router.get('/:id', async (req, res) => {
-    let id = req.params.id;
-    try {
-        res.json((await db.Chirps.one(id))[0]);
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
-    }
-});
-
-
-router.post('/', async (req, res) => {
-    let author = req.body.author;
-    let text = req.body.text;
-    let location = req.body.location;
-    let mention = checkForMentions(text);
-    try {
-        let result = await db.Chirps.addChirp(author, text, location, mention);
-        await db.Chirps.addUser(author);
-        res.json(result);
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
-    }
-});
-
-router.put('/:id', async (req, res) => {
-    let id = req.params.id;
-    let author = req.body.author;
-    let text = req.body.text;
-    let location = req.body.location;
-    try {
-        res.json(await db.Chirps.edit(id, author, text, location));
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
+    if (chirpid) {
+        try {
+            const [chirp] = await db.Chirps.one(chirpid);
+            res.json(chirp);
+        } catch (error) {
+            console.log(error);
+            next(error);
+        }
+    } else {
+        try {
+            const chirps = await db.Chirps.all();
+            res.json(chirps);
+        } catch (error) {
+            console.log(error);
+            next(error);
+        }
     }
 });
 
 
-router.delete('/:id', async (req, res) => {
-    let id = req.params.id;
+
+router.post('/', async (req, res, next) => {
+    const chirpDTO = req.body;
+
     try {
-        res.json(await db.Chirps.remove(id));
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
+        const { insertId: chirpid } = await db.Chirps.insert(chirpDTO);
+        res.json({ chirpid, msg: 'chirp inserted' });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
+
+router.put('/:id', async (req, res, next) => {
+    const chirpid = Number(req.params.id);
+    const chirpDTO = req.body;
+
+    try {
+        const { affectedRows } = await db.Chirps.update(chirpDTO, chirpid);
+        res.json({ affectedRows, msg: 'chirp updated' });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
+
+router.delete('/:id', async (req, res, next) => {
+    const chirpid = Number(req.params.id);
+
+    try {
+        const { affectedRows } = await db.Chirps.destroy(chirpid);
+        res.json({ affectedRows, msg: 'chirp deleted' });
+    } catch (error) {
+        console.log(error);
+        next(error);
     }
 });
 

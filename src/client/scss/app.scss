@@ -1,9 +1,11 @@
 $theme-colors: (
-    'primary': #0091ea //Covalence Blue!  :D
+    'primary': #b967ff,
+    'secondary': #ff71ce,
+    'info': #01cdfe,
+    'success': #05ffa1,
+    'warning': #fffb96,
+    'danger': #aa395c
 );
 
-.author-text {
-    font-size: 1.8rem;
-}
 
 @import '../../../node_modules/bootstrap/scss/bootstrap.scss';
